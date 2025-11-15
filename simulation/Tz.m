@@ -3,14 +3,19 @@ function Tz = Tz(angle, a)
 %
 %   input:
 %       angle = amount of rotation, in radians
-%       a = length of the rigid body
+%       a = relative position from point i-1 to i
 %
 %   output:
 %       Tz = 4x4 transformation matrix
 
-Tz = [cos(angle) -sin(angle) 0 a*cos(angle);
-      sin(angle)  cos(angle) 0 a*sin(angle);
-      0           0          1 0;
-      0           0          0 1]; % Isara
+R = Rz(angle);
+p = R * a;
+Tz = [R, p];
+Tz = [Tz; 0 0 0 1;];
+
+% Tz = [cos(angle) -sin(angle) 0 a*cos(angle);
+%       sin(angle)  cos(angle) 0 a*sin(angle);
+%       0           0          1 0;
+%       0           0          0 1]; % Isara
 
 end

@@ -1,4 +1,4 @@
-function R = Ry(angle)
+function Ty = Ty(angle, a)
 %Ry Get the 3x3 rotation matrix around the E2 axis ("y")
 %
 %   input:
@@ -7,8 +7,9 @@ function R = Ry(angle)
 %   output:
 %       R = 3x3 rotation matrix
 
-R = [cos(angle) 0 sin(angle);
-     0          1 0;
-    -sin(angle) 0 cos(angle)];
+R = Ry(angle);
+p = R * a;
+Ty = [R, p];
+Ty = [Ty; 0 0 0 1;];
 
 end
