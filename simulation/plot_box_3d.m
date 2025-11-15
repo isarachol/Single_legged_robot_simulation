@@ -1,15 +1,11 @@
-function handles = plot_rectbar_3d_robotjoints(T, dim) %, shift_R_axis)
-%plot_rectbar_3d_robotjoints Plot a rectangular bar in 2D given a rotation,
-%translation, and some of its geometry. Assumes that rotation R is applied at the
-%leftmost location on the bar, i.e., the neutral pose is a cantilevered
-%beam. This is the constraint associated with a serial chain manipulator.
+function handles = plot_box_3d(T, dim, vecsize)
+% plot_box_3d Plot a 3D box given a transformation and geometry 
+% and optional argument vecsize for frame plotting.
+% Assumes that transformation is extrinsic (x1 = R0_1 x0 + T0_1)
 %
 %   inputs:
 %       T = 4x4 transformation matrix to apply to the bar (extrinsic)
-%       translate = the translation to apply after rotating. Still 3x1.
 %       dim = dimension of the box along xyz directions of local frame
-%       shift_R_axis = shift of axis of rotation in xyz of local frame
-%       trans = translation of box after rotating
 %
 %   outputs:
 %       handles = results of the plot function, for the caller's use later
@@ -20,6 +16,11 @@ function handles = plot_rectbar_3d_robotjoints(T, dim) %, shift_R_axis)
 
 % The corners are these position vectors, treating the bar as uniform
 % density means its C.o.M. is at the geometric center as well.
+arguments
+    T
+    dim
+    vecsize (1,1) double = 0.02
+end
 
 len = dim(1); w = dim(2); h = dim(3);
 
@@ -73,7 +74,7 @@ for i=1:8
     end
 end
 % draw body frames
-quiver3(T(1,4), T(2,4), T(3,4), T(1,1), T(2,1), T(3,1), 0.02, 'r', "MaxHeadSize", 100);
-quiver3(T(1,4), T(2,4), T(3,4), T(1,2), T(2,2), T(3,2), 0.02, 'g', "MaxHeadSize", 100);
-quiver3(T(1,4), T(2,4), T(3,4), T(1,3), T(2,3), T(3,3), 0.02, 'b', "MaxHeadSize", 100);
+quiver3(T(1,4), T(2,4), T(3,4), T(1,1), T(2,1), T(3,1), vecsize, 'r', "MaxHeadSize", 100);
+quiver3(T(1,4), T(2,4), T(3,4), T(1,2), T(2,2), T(3,2), vecsize, 'g', "MaxHeadSize", 100);
+quiver3(T(1,4), T(2,4), T(3,4), T(1,3), T(2,3), T(3,3), vecsize, 'b', "MaxHeadSize", 100);
 end
