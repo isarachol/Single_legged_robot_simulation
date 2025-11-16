@@ -11,4 +11,15 @@ R = [cos(angle), -sin(angle), 0;
      sin(angle), cos(angle),  0;
      0, 0, 1];
 
+tol = 10^(-10);
+for i=1:3
+    for j=1:3
+        if isnumeric(R(i,j))
+            if abs(R(i,j))<tol
+                R(i,j) = 0;
+            end
+        end
+    end
+end
+
 end
