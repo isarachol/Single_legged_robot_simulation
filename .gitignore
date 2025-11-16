@@ -1,3 +1,4 @@
 *.asv
 simulation/unused/*
 profiler/*
+documents/*

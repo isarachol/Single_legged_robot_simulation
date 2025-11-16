@@ -15,6 +15,7 @@ load(desc_filename);
 % time
 tmax = 5;
 dt = 0.0001;
+t_span = 0:dt:tmax-dt;
 
 n = tmax/dt; % number of timesteps, for loop-ing
 % somehow matlab doesn't round correctly. sometimes...
@@ -22,17 +23,39 @@ n = round(n);
 
 % initial conditions
 q0 = [0; 0.5]; %; 2; 0.1; 0; 0];
-dq0 = [0; -0.3]; %; 0.5; 0.1; 0; 0];
+dq0 = [0; 3]; %; 0.5; 0.1; 0; 0];
 x0 = [q0;dq0];
 
 %% Solve for trajectory
 x_traj = zeros(size(x0,1),n);
+KE = zeros(n, 1);
 x_traj(:,1) = x0;
+KE(1) = ke_test_2dof(x_traj(:,i));
 
 for i=2:n
     bolddotx_t = solve_2dof(x_traj(:,i-1));
     x_traj(:,i) = x_traj(:,i-1) + bolddotx_t * dt; % forward euler
+    KE(i) = ke_test_2dof(x_traj(:,i));
 end
+
+%% Conservation of energy test (KE only)
+figure()
+plot(t_span, KE);
+xlabel("Time (s)");
+ylabel("KE (J)");
+title("KE vs time");
+
+figure()
+plot(t_span, x_traj(4,:));
+xlabel("Time (s)");
+ylabel("dq2 (rad/s)");
+title("dq2 vs time");
+
+figure()
+plot(x_traj(2,:), x_traj(4,:));
+xlabel("q2 (rad)");
+ylabel("dq2 (rad/s)");
+title("dq2 vs q2");
 
 %% Simulation
 
@@ -49,7 +72,7 @@ q_aug = [0; 0; q1; q2; 0; q3; 0; q4; q5; q6];
 % Plot 3D
 show_plot = 1;
 if(show_plot)
-    speedup = 1000;
+    speedup = 100;
     n_speedup = n/speedup;
 
     figure()
@@ -60,9 +83,12 @@ if(show_plot)
     zlabel("Z (m)");
     title("Pixaar simulation: static");
     axis equal;
-    view (135,45);
+    xlim([-0.3, 0.1]);
+    ylim([-0.1, 0.1]);
+    zlim([-0.1, 0.3]);
+    view (135,15);
     vecsize = 0.02;
-    % cp = constantplane("z", 0);
+    cp = constantplane("z", 0);
     % cp.FaceColor = "#7CFC00";
 
     % world frame
@@ -93,7 +119,7 @@ if(show_plot)
         for i=1:N % takes 90% of execution time
             handle{i} = plot_box_3d(T{i}, dim(:,i), vecsize, 0);
         end
-        drawnow;
+        drawnow limitrate;
     end
 end
 

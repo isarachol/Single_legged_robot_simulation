@@ -23,61 +23,24 @@ arguments
     plot_frame logical = 1
 end
 
-len = dim(1); w = dim(2); h = dim(3);
+% compute box points
+pts = get_box_points(T, dim);
 
-corners = zeros(3,8);
-corners(:,1) = [-len/2; -w/2; -h/2];
-corners(:,2) = [-len/2; w/2; -h/2];
-corners(:,3) = [len/2; w/2; -h/2];
-corners(:,4) = [len/2; -w/2; -h/2];
-corners(:,5) = [-len/2; -w/2; h/2];
-corners(:,6) = [-len/2; w/2; h/2];
-corners(:,7) = [len/2; w/2; h/2];
-corners(:,8) = [len/2; -w/2; h/2];
-
-% Translate the points on the bar so that the origin is the point of
-% rotation
-corners = corners; % + shift_R_axis; % only move along x axis of the bar % Isara
-corners = [corners; ones(1,8)]; % make it 4x1 vec
-
-% Rotate the bar around the origin
-r = T * corners;
-r = r(1:3,:); % back to 3x1 vec
-% Translate the bar into its final location in space
-% r = r + trans; % Isara
-
-% finally, plot, and save the handles.
-% an easy way to do so is to plot a line between each pair of points.
-handles = cell([15,1]); % know for sure
-handlecount = 1;
+handles = cell([5,1]); % know for sure
 % draw two rectangles
-for i=1:8
-    j = i+1;
-    if i == 4
-        j = 1;
-    end
-    if i==8
-        j = 5;
-    end
-    X = [r(1,i); r(1,j)];
-    Y = [r(2,i); r(2,j)];
-    Z = [r(3,i); r(3,j)];
-    handles{handlecount} = plot3(X, Y, Z, 'r');
-    handlecount = handlecount+1;
+handles{1} = plot3(pts(1,:), pts(2,:), pts(3,:), 'r');
+% handlecount = handlecount+1;
 
-    % connect two rectangles
-    if i<5
-        X = [r(1,i); r(1,i+4)];
-        Y = [r(2,i); r(2,i+4)];
-        Z = [r(3,i); r(3,i+4)];
-        handles{handlecount} = plot3(X, Y, Z, 'r');
-        handlecount = handlecount+1;
-    end
-end
+% connect two rectangles
+X = [pts(1,2); pts(1,7); pts(1,8); pts(1,3); pts(1,4); pts(1,9)];
+Y = [pts(2,2); pts(2,7); pts(2,8); pts(2,3); pts(2,4); pts(2,9)];
+Z = [pts(3,2); pts(3,7); pts(3,8); pts(3,3); pts(3,4); pts(3,9)];
+handles{2} = plot3(X, Y, Z, 'r');
+
 % draw body frames
 if plot_frame
-    handles{handlecount} = quiver3(T(1,4), T(2,4), T(3,4), T(1,1), T(2,1), T(3,1), vecsize, 'r', "MaxHeadSize", 100);
-    handles{handlecount+1} = quiver3(T(1,4), T(2,4), T(3,4), T(1,2), T(2,2), T(3,2), vecsize, 'g', "MaxHeadSize", 100);
-    handles{handlecount+2} = quiver3(T(1,4), T(2,4), T(3,4), T(1,3), T(2,3), T(3,3), vecsize, 'b', "MaxHeadSize", 100);
+    handles{3} = quiver3(T(1,4), T(2,4), T(3,4), T(1,1), T(2,1), T(3,1), vecsize, 'r', "MaxHeadSize", 100);
+    handles{4} = quiver3(T(1,4), T(2,4), T(3,4), T(1,2), T(2,2), T(3,2), vecsize, 'g', "MaxHeadSize", 100);
+    handles{5} = quiver3(T(1,4), T(2,4), T(3,4), T(1,3), T(2,3), T(3,3), vecsize, 'b', "MaxHeadSize", 100);
 end
 end
