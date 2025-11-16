@@ -61,6 +61,7 @@ if(show_plot)
     title("Pixaar simulation: static");
     axis equal;
     view (135,45);
+    vecsize = 0.02;
     % cp = constantplane("z", 0);
     % cp.FaceColor = "#7CFC00";
 
@@ -73,7 +74,7 @@ if(show_plot)
     T = solve_kinematics(q_aug, joint_to_com, rot);
     handle = {};
     for i=1:numel(T)
-        handle{i} = plot_box_3d(T{i}, dim(:,i));
+        handle{i} = plot_box_3d(T{i}, dim(:,i), vecsize, 0);
     end
     drawnow;
     
@@ -82,21 +83,16 @@ if(show_plot)
         t = ts * speedup;
         % delete previous plot
         for i=1:N
-            for k=1:size(handle{i}, 2)
+            for k=1:size(handle{i}, 1)
                 delete(handle{i}{k});
             end
         end
-
         % display now config
-        q_aug = [0; 0; x_traj(1,t); x_traj(2,t); 0; q3; 0; q4; q5; q6]
+        q_aug = [0; 0; x_traj(1,t); x_traj(2,t); 0; q3; 0; q4; q5; q6];
         T = solve_kinematics(q_aug, joint_to_com, rot);
-        for i=1:N
-            handle{i} = plot_box_3d(T{i}, dim(:,i));
+        for i=1:N % takes 90% of execution time
+            handle{i} = plot_box_3d(T{i}, dim(:,i), vecsize, 0);
         end
-        % world frame
-        quiver3(0,0,0,1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
-        quiver3(0,0,0,0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
-        quiver3(0,0,0,0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
         drawnow;
     end
 end

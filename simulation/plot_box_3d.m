@@ -1,4 +1,4 @@
-function handles = plot_box_3d(T, dim, vecsize)
+function handles = plot_box_3d(T, dim, vecsize, plot_frame)
 % plot_box_3d Plot a 3D box given a transformation and geometry 
 % and optional argument vecsize for frame plotting.
 % Assumes that transformation is extrinsic (x1 = R0_1 x0 + T0_1)
@@ -20,6 +20,7 @@ arguments
     T
     dim
     vecsize (1,1) double = 0.02
+    plot_frame logical = 1
 end
 
 len = dim(1); w = dim(2); h = dim(3);
@@ -47,7 +48,7 @@ r = r(1:3,:); % back to 3x1 vec
 
 % finally, plot, and save the handles.
 % an easy way to do so is to plot a line between each pair of points.
-handles = {};
+handles = cell([15,1]); % know for sure
 handlecount = 1;
 % draw two rectangles
 for i=1:8
@@ -74,7 +75,9 @@ for i=1:8
     end
 end
 % draw body frames
-handles{handlecount} = quiver3(T(1,4), T(2,4), T(3,4), T(1,1), T(2,1), T(3,1), vecsize, 'r', "MaxHeadSize", 100);
-handles{handlecount+1} = quiver3(T(1,4), T(2,4), T(3,4), T(1,2), T(2,2), T(3,2), vecsize, 'g', "MaxHeadSize", 100);
-handles{handlecount+2} = quiver3(T(1,4), T(2,4), T(3,4), T(1,3), T(2,3), T(3,3), vecsize, 'b', "MaxHeadSize", 100);
+if plot_frame
+    handles{handlecount} = quiver3(T(1,4), T(2,4), T(3,4), T(1,1), T(2,1), T(3,1), vecsize, 'r', "MaxHeadSize", 100);
+    handles{handlecount+1} = quiver3(T(1,4), T(2,4), T(3,4), T(1,2), T(2,2), T(3,2), vecsize, 'g', "MaxHeadSize", 100);
+    handles{handlecount+2} = quiver3(T(1,4), T(2,4), T(3,4), T(1,3), T(2,3), T(3,3), vecsize, 'b', "MaxHeadSize", 100);
+end
 end
