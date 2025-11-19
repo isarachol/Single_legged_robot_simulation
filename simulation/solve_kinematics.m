@@ -8,8 +8,11 @@ zero_vec = [0;0;0];
 N = numel(q);
 T = cell(N,1);
 for i=1:N
+    % link
     T{i} = Tx(q(i), joint_to_com(:,i));
-    if rot(1,i) ~= 0
+
+    % joints has no length
+    if rot(1,i) ~= 0 
         T{i} = T{i} * Tx(rot(1,i),zero_vec);
     end
     if rot(2,i) ~= 0
@@ -18,6 +21,8 @@ for i=1:N
     if rot(3,i) ~= 0
         T{i} = T{i} * Tz(rot(3,i),zero_vec);
     end
+
+    % extrinsic transformations
     if i>1
         T{i} = T{i-1} * T{i};
     end

@@ -19,12 +19,12 @@ corners(:,1) = [-len/2; -w/2; -h/2];
 corners(:,2) = [-len/2; w/2; -h/2];
 corners(:,3) = [len/2; w/2; -h/2];
 corners(:,4) = [len/2; -w/2; -h/2];
-corners(:,5) = [-len/2; -w/2; -h/2];
-corners(:,6) = [-len/2; -w/2; h/2];
-corners(:,7) = [-len/2; w/2; h/2];
-corners(:,8) = [len/2; w/2; h/2];
-corners(:,9) = [len/2; -w/2; h/2];
-corners(:,10) = [-len/2; -w/2; h/2];
+% corners(:,5) = [-len/2; -w/2; -h/2];
+corners(:,5) = [-len/2; -w/2; h/2];
+corners(:,6) = [-len/2; w/2; h/2];
+corners(:,7) = [len/2; w/2; h/2];
+corners(:,8) = [len/2; -w/2; h/2];
+% corners(:,10) = [-len/2; -w/2; h/2];
 
 % Translate the points on the bar so that the origin is the point of
 % rotation

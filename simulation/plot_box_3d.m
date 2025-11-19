@@ -24,18 +24,12 @@ arguments
 end
 
 % compute box points
-pts = get_box_points(T, dim);
+pts = get_box_points(T, dim); % 8 corners
+pts_unbroken = [pts(:,1:4), pts(:,1), pts(:,5:8), pts(:,5:6), pts(:,2:3), pts(:,7:8), pts(:,4)]; % how to connect them in order
 
-handles = cell([5,1]); % know for sure
-% draw two rectangles
-handles{1} = plot3(pts(1,:), pts(2,:), pts(3,:), 'r');
-% handlecount = handlecount+1;
-
-% connect two rectangles
-X = [pts(1,2); pts(1,7); pts(1,8); pts(1,3); pts(1,4); pts(1,9)];
-Y = [pts(2,2); pts(2,7); pts(2,8); pts(2,3); pts(2,4); pts(2,9)];
-Z = [pts(3,2); pts(3,7); pts(3,8); pts(3,3); pts(3,4); pts(3,9)];
-handles{2} = plot3(X, Y, Z, 'r');
+handles = cell([4,1]); % know for sure
+% draw 
+handles{1} = plot3(pts_unbroken(1,:), pts_unbroken(2,:), pts_unbroken(3,:), 'r');
 
 % draw body frames
 if plot_frame
@@ -43,4 +37,5 @@ if plot_frame
     handles{4} = quiver3(T(1,4), T(2,4), T(3,4), T(1,2), T(2,2), T(3,2), vecsize, 'g', "MaxHeadSize", 100);
     handles{5} = quiver3(T(1,4), T(2,4), T(3,4), T(1,3), T(2,3), T(3,3), vecsize, 'b', "MaxHeadSize", 100);
 end
+
 end

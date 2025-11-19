@@ -17,36 +17,45 @@ load(desc_filename);
 syms q1 q2 q3 q4 q5 q6 'real'
 % q1 = 0;
 q = [0; 0; q1; q2; 0; q3; 0; q4; q5; q6];
+% q = [0; 0; 0; q2; 0; q3; 0; q4; q5; q6];
 T = solve_kinematics(q, joint_to_com, rot);
 
-% Solve kinematics
-% T_foot = Tx(0, foot_w_to_com); % fixed joint w to foot
-% T_invl1 = T_foot * Tx(0, invl1_prev_to_com); % fixed joint foot to j1
-% T_invl2 = T_invl1 * Tx(q1, invl2_prev_to_com); % revolute j1 to j2
-% T_leg1 = T_invl2 * Ty(q2, leg1_prev_to_com); % revolute j2 to leg1
-
 % Currently, T{2} represents to global origin for the robot (no jumping)
-% q1
+%% q1
 % Jp^3_3
-z_2 = T{3}(1:3, 1); % abs rotation axis (relative is Ex)
+z_2 = T{2}(1:3, 1); % abs rotation axis (relative is Ex)
 p_2 = T{2}(1:3, 4);
 r_3 = T{3}(1:3, 4);
 r_3_2 = r_3 - p_2;
 Jp3_3 = skw(z_2) * r_3_2;
 
-% q2
+%% q2
 % Jp^4_3
 r_4 = T{4}(1:3, 4);
 r_4_2 = r_4 - p_2;
 Jp4_3 = skw(z_2) * r_4_2;
 
 % Jp^4_4
-z_3 = T{3}(1:3, 2); % relative is Ey
+z_3 = T{3}(1:3, 1); % relative is Ex
 p_3 = T{3}(1:3, 4);
 r_4_3 = r_4 - p_3;
 Jp4_4 = skw(z_3) * r_4_3;
 
-% combine Jp, Jo
+%% q3
+% Jp^6_3???
+% r_4 = T{4}(1:3, 4);
+% r_4_2 = r_4 - p_2;
+% Jp4_3 = skw(z_2) * r_4_2;
+% 
+% % Jp^4_4
+% z_3 = T{3}(1:3, 1); % relative is Ex
+% p_3 = T{3}(1:3, 4);
+% r_4_3 = r_4 - p_3;
+% Jp4_4 = skw(z_3) * r_4_3;
+
+%% combine Jp, Jo
+% Jp3 = Jp3_3;
+% Jo3 = z_2;
 Jp3 = [Jp3_3, zero_vec];
 Jo3 = [z_2, zero_vec];
 Jp4 = [Jp4_3, Jp4_4];
@@ -59,8 +68,8 @@ R_4 = T{4}(1:3, 1:3);
 
 disp('Calculating the inverse of this matrix:')
 % i = 1:1
-M_sym = m(3) * (Jp3' * Jp3) + Jo3'*(R_3*I_3*R_3')*Jo3;
-M_sym = M_sym + m(4) * (Jp4' * Jp4) + Jo4'*(R_4*I_4*R_4')*Jo4;
+M_sym = m(3) * (Jp3' * Jp3) + Jo3'*(R_3*I_3*R_3')*Jo3; % should be rock solid
+M_sym = M_sym + m(4) * (Jp4' * Jp4) + Jo4'*(R_4*I_4*R_4')*Jo4
 Minv_sym = inv(M_sym);
 
 % turn q's into vector

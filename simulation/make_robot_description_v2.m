@@ -27,6 +27,7 @@ foot_w = 0.06;
 foot_h = 0.02;
 dim(:,1) = [foot_l; foot_w; foot_h];
 joint_to_com(:,1) = [0; 0; foot_h/2]; % move up so the foot is on the ground
+% joint_to_com(:,1) = [0; 0; 0];
 
 % 2) invisiblelink(invl) 1 (foot to j1)
 invl_l = 0.02;
@@ -34,10 +35,12 @@ invl_w = 0.01;
 invl_h = 0.01;
 dim(:,2) = [invl_l; invl_w; invl_h];
 joint_to_com(:,2) = [-foot_l/3; 0; foot_h];
+% joint_to_com(:,2) = [0; 0; 0];
 
 % 3) invisiblelink(invl) 2 (j1 to j2)
 dim(:,3) = dim(:,2);%[invl_w; invl_l; invl_h];
 joint_to_com(:,3) = [-invl_w; 0; invl_w];
+% joint_to_com(:,3) = [0; 0; 0];
 rot(3,3) = pi/2;
 
 % 4) leg 1 (j2 to leg1)

@@ -9,6 +9,8 @@ syms q1 q2 dq1 dq2 'real'
 N = 2;
 q = [q1; q2];
 dq = [dq1; dq2];
+% q=q1;
+% dq=dq1;
 M = M_2dof(q);
 C_sym = sym('c', size(M,1));
 C_c = sym('c', size(M));

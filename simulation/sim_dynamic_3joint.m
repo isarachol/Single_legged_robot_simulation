@@ -1,4 +1,4 @@
-function [results] = sim_dynamic_3joint()
+% function [results] = sim_dynamic_3joint()
 
 close all;
 clc;
@@ -11,6 +11,9 @@ desc_filename = 'robot_desc_v2.mat';
 make_robot_description_v2(desc_filename);
 load(desc_filename);
 
+%% Make M, M_inv, C functions
+make_syms();
+
 %% Setup
 % time
 tmax = 5;
@@ -22,15 +25,17 @@ n = tmax/dt; % number of timesteps, for loop-ing
 n = round(n);
 
 % initial conditions
-q0 = [0; 0.5]; %; 2; 0.1; 0; 0];
-dq0 = [0; 3]; %; 0.5; 0.1; 0; 0];
+q0 = [0; 0]; %; 2; 0.1; 0; 0];
+dq0 = [0.5; 0]; %; 0.5; 0.1; 0; 0];
+% q0 = 0;
+% dq0 = 3;
 x0 = [q0;dq0];
 
 %% Solve for trajectory
 x_traj = zeros(size(x0,1),n);
 KE = zeros(n, 1);
 x_traj(:,1) = x0;
-KE(1) = ke_test_2dof(x_traj(:,i));
+KE(1) = ke_test_2dof(x_traj(:,1));
 
 for i=2:n
     bolddotx_t = solve_2dof(x_traj(:,i-1));
@@ -57,7 +62,7 @@ xlabel("q2 (rad)");
 ylabel("dq2 (rad/s)");
 title("dq2 vs q2");
 
-%% Simulation
+%% Simulation ====================== Rock solid =============================
 
 % Define configuration
 q1 = 0;
@@ -71,6 +76,7 @@ q_aug = [0; 0; q1; q2; 0; q3; 0; q4; q5; q6];
 
 % Plot 3D
 show_plot = 1;
+N=4;
 if(show_plot)
     speedup = 100;
     n_speedup = n/speedup;
@@ -81,7 +87,7 @@ if(show_plot)
     xlabel("X (m)");
     ylabel("Y (m)");
     zlabel("Z (m)");
-    title("Pixaar simulation: static");
+    title("Pixaar simulation: dynamic (kinetic energy only)");
     axis equal;
     xlim([-0.3, 0.1]);
     ylim([-0.1, 0.1]);
@@ -99,7 +105,7 @@ if(show_plot)
     q_aug = [0; 0; x_traj(1,1); x_traj(2,1); 0; q3; 0; q4; q5; q6];
     T = solve_kinematics(q_aug, joint_to_com, rot);
     handle = {};
-    for i=1:numel(T)
+    for i=1:N %numel(T)
         handle{i} = plot_box_3d(T{i}, dim(:,i), vecsize, 0);
     end
     drawnow;
@@ -123,4 +129,4 @@ if(show_plot)
     end
 end
 
-end
+% end
