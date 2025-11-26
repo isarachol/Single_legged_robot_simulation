@@ -1,9 +1,9 @@
-% function [results] = sim_dynamic_3joint()
+% function [results] = sim_dynamic_2joint()
 
 close all;
 clc;
 
-disp('Dynamic test (3 joints)')
+disp('Dynamic test (2 joints)')
 
 %% Robot Descriptions
 % load robot description (geometry)
@@ -14,13 +14,13 @@ load(desc_filename);
 % Make M, M_inv, C functions
 make_syms_again = 0;
 if make_syms_again
-    make_syms(3);
+    make_syms(2);
 end
 
 %% Setup
 % time
 tmax = 100;
-dt = 0.0005;
+dt = 0.001;
 t_span = 0:dt:tmax-dt;
 
 n = tmax/dt; % number of timesteps, for loop-ing
@@ -28,8 +28,8 @@ n = tmax/dt; % number of timesteps, for loop-ing
 n = round(n);
 
 % initial conditions
-q0 = [0; 0; pi*0.8]; %; 2; 0.1; 0; 0];
-dq0 = [0; -1; 2]; %; 0.5; 0.1; 0; 0];
+q0 = [0; 0]; %; 2; 0.1; 0; 0];
+dq0 = [0.8; 2]; %; 0.5; 0.1; 0; 0];
 % q0 = 0;
 % dq0 = 3;
 x0 = [q0;dq0];
@@ -38,12 +38,12 @@ x0 = [q0;dq0];
 x_traj = zeros(size(x0,1),n);
 KE = zeros(n, 1);
 x_traj(:,1) = x0;
-KE(1) = ke_test_ndof(x_traj(:,1));
+KE(1) = ke_test_2dof(x_traj(:,1));
 
 for i=2:n
-    bolddotx_t = solve_ndof(x_traj(:,i-1));
+    bolddotx_t = solve_2dof(x_traj(:,i-1));
     x_traj(:,i) = x_traj(:,i-1) + bolddotx_t * dt; % forward euler
-    KE(i) = ke_test_ndof(x_traj(:,i));
+    KE(i) = ke_test_2dof(x_traj(:,i));
 end
 
 %% Conservation of energy test (KE only)
@@ -52,8 +52,18 @@ plot(t_span, KE);
 xlabel("Time (s)");
 ylabel("KE (J)");
 title("KE vs time");
-bound = 0.2;
-ylim([max(KE)*(1-bound), max(KE)*(1+bound)]);
+
+figure()
+plot(t_span, x_traj(4,:));
+xlabel("Time (s)");
+ylabel("dq2 (rad/s)");
+title("dq2 vs time");
+
+figure()
+plot(x_traj(2,:), x_traj(4,:));
+xlabel("q2 (rad)");
+ylabel("dq2 (rad/s)");
+title("dq2 vs q2");
 
 %% Simulation ====================== Rock solid =============================
 
@@ -74,7 +84,7 @@ if(show_plot)
     speedup = 100;
     n_speedup = n/speedup;
 
-    f = figure();
+    figure()
     grid on;
     hold on
     xlabel("X (m)");
@@ -82,11 +92,10 @@ if(show_plot)
     zlabel("Z (m)");
     title("Pixaar simulation: dynamic (kinetic energy only)");
     axis equal;
-    xlim([-0.4, 0.4]);
-    ylim([-0.4, 0.4]);
-    zlim([-0.4, 0.4]);
-    f.Position = [250,70,1000,800];
-    view(100,15); %(135,15);
+    xlim([-0.3, 0.1]);
+    ylim([-0.1, 0.1]);
+    zlim([-0.1, 0.3]);
+    view (135,15);
     vecsize = 0.02;
     cp = constantplane("z", 0);
     % cp.FaceColor = "#7CFC00";
@@ -96,7 +105,7 @@ if(show_plot)
     quiver3(0,0,0,0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
     quiver3(0,0,0,0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
 
-    q_aug = [0; 0; x_traj(1,1); x_traj(2,1); 0; x_traj(3,1); 0; q4; q5; q6];
+    q_aug = [0; 0; x_traj(1,1); x_traj(2,1); 0; q3; 0; q4; q5; q6];
     T = solve_kinematics(q_aug, joint_to_com, rot);
     handle = {};
     handle = plot_single_legged_robot(T, dim, 0);
@@ -112,7 +121,7 @@ if(show_plot)
             end
         end
         % display now config
-        q_aug = [0; 0; x_traj(1,t); x_traj(2,t); 0; x_traj(3,t); 0; q4; q5; q6];
+        q_aug = [0; 0; x_traj(1,t); x_traj(2,t); 0; q3; 0; q4; q5; q6];
         T = solve_kinematics(q_aug, joint_to_com, rot);
         handle = plot_single_legged_robot(T, dim, 0);
         drawnow limitrate;
