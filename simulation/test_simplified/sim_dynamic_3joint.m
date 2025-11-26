@@ -3,7 +3,7 @@
 close all;
 clc;
 
-disp('Dynamic test (3 joints)')
+disp('Dynamic test (2 joints)')
 
 %% Robot Descriptions
 % load robot description (geometry)
@@ -19,8 +19,8 @@ end
 
 %% Setup
 % time
-tmax = 100;
-dt = 0.001;
+tmax = 20;
+dt = 0.0001;
 t_span = 0:dt:tmax-dt;
 
 n = tmax/dt; % number of timesteps, for loop-ing
@@ -29,7 +29,7 @@ n = round(n);
 
 % initial conditions
 q0 = [0; 0]; %; 2; 0.1; 0; 0];
-dq0 = [0.8; 2]; %; 0.5; 0.1; 0; 0];
+dq0 = [0; 0.7]; %; 0.5; 0.1; 0; 0];
 % q0 = 0;
 % dq0 = 3;
 x0 = [q0;dq0];
@@ -68,18 +68,18 @@ title("dq2 vs q2");
 %% Simulation ====================== Rock solid =============================
 
 % Define configuration
-q1 = 0;
-q2 = 0.2;
-q3 = pi-2*q2;
-q4 = q2-pi/2;
-q5 = 0;
-q6 = 0;
-q = [q1; q2];
-q_aug = [0; 0; q1; q2; 0; q3; 0; q4; q5; q6];
+% q1 = 0;
+% q2 = 0.2;
+% q3 = pi-2*q2;
+% q4 = q2-pi/2;
+% q5 = 0;
+% q6 = 0;
+% q = [q1; q2];
+% q_aug = [0; 0; q1; q2; 0; q3; 0; q4; q5; q6];
 
 % Plot 3D
 show_plot = 1;
-N=10;
+N=3;
 if(show_plot)
     speedup = 100;
     n_speedup = n/speedup;
@@ -92,9 +92,9 @@ if(show_plot)
     zlabel("Z (m)");
     title("Pixaar simulation: dynamic (kinetic energy only)");
     axis equal;
-    xlim([-0.3, 0.1]);
-    ylim([-0.1, 0.1]);
-    zlim([-0.1, 0.3]);
+    % xlim([-0.3, 0.1]);
+    % ylim([-0.1, 0.1]);
+    % zlim([-0.1, 0.3]);
     view (135,15);
     vecsize = 0.02;
     cp = constantplane("z", 0);
@@ -105,7 +105,7 @@ if(show_plot)
     quiver3(0,0,0,0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
     quiver3(0,0,0,0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
 
-    q_aug = [0; 0; x_traj(1,1); x_traj(2,1); 0; q3; 0; q4; q5; q6];
+    q_aug = [x_traj(1,1); 0; x_traj(2,1)];
     T = solve_kinematics(q_aug, joint_to_com, rot);
     handle = {};
     handle = plot_single_legged_robot(T, dim, 0);
@@ -121,7 +121,7 @@ if(show_plot)
             end
         end
         % display now config
-        q_aug = [0; 0; x_traj(1,t); x_traj(2,t); 0; q3; 0; q4; q5; q6];
+        q_aug = [x_traj(1,t); 0; x_traj(2,t)];
         T = solve_kinematics(q_aug, joint_to_com, rot);
         handle = plot_single_legged_robot(T, dim, 0);
         drawnow limitrate;

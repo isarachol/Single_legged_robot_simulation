@@ -14,62 +14,49 @@ make_robot_description_v2(desc_filename);
 load(desc_filename);
 
 % define variables
-syms q1 q2 q3 q4 q5 q6 'real'
+syms q1 q2 'real'
 % q1 = 0;
-q = [0; 0; q1; q2; 0; q3; 0; q4; q5; q6];
-% q = [0; 0; 0; q2; 0; q3; 0; q4; q5; q6];
+q = [q1; 0; q2];
 T = solve_kinematics(q, joint_to_com, rot);
 
 % Currently, T{2} represents to global origin for the robot (no jumping)
 %% q1
-% Jp^3_3
-z_2 = T{2}(1:3, 1); % abs rotation axis (relative is Ex)
-p_2 = T{2}(1:3, 4);
-r_3 = T{3}(1:3, 4);
-r_3_2 = r_3 - p_2;
-Jp3_3 = skw(z_2) * r_3_2; % checked
+% Jp^1_1
+z_0 = [1;0;0]; % abs rotation axis (relative is Ex)
+p_0 = zero_vec;
+r_1 = T{1}(1:3, 4);
+r_1_0 = r_1 - p_0;
+Jp1_1 = skw(z_0) * r_1_0;
 
 %% q2
-% Jp^4_3
-r_4 = T{4}(1:3, 4);
-r_4_2 = r_4 - p_2;
-Jp4_3 = skw(z_2) * r_4_2;
+% Jp^2_1
+r_2 = T{3}(1:3, 4);
+r_2_0 = r_2 - p_0;
+Jp2_1 = skw(z_0) * r_2_0;
 
-% Jp^4_4
-z_3 = T{3}(1:3, 1); % relative is Ex
-p_3 = T{3}(1:3, 4);
-r_4_3 = r_4 - p_3; % norm correct
-Jp4_4 = skw(z_3) * r_4_3;
-
-%% q3
-% Jp^6_3???
-% r_4 = T{4}(1:3, 4);
-% r_4_2 = r_4 - p_2;
-% Jp4_3 = skw(z_2) * r_4_2;
-% 
-% % Jp^4_4
-% z_3 = T{3}(1:3, 1); % relative is Ex
-% p_3 = T{3}(1:3, 4);
-% r_4_3 = r_4 - p_3;
-% Jp4_4 = skw(z_3) * r_4_3;
+% Jp^2_2
+z_1 = T{1}(1:3, 1); % relative is Ex
+p_1 = T{2}(1:3, 4); % edit --> position from joint, not from COM of link 1
+r_2_1 = r_2 - p_1;
+Jp2_2 = skw(z_1) * r_2_1;
 
 %% combine Jp, Jo
 % Jp3 = Jp3_3;
 % Jo3 = z_2;
-Jp3 = [Jp3_3, zero_vec];
-Jo3 = [z_2, zero_vec];
-Jp4 = [Jp4_3, Jp4_4];
-Jo4 = [z_2, z_3];
+Jp1 = [Jp1_1, zero_vec];
+Jo1 = [z_0, zero_vec];
+Jp2 = [Jp2_1, Jp2_2];
+Jo2 = [z_0, z_1];
 
-I_3 = diag(I(:,3));
-I_4 = diag(I(:,4));
-R_3 = T{3}(1:3, 1:3);
-R_4 = T{4}(1:3, 1:3);
+I_1 = diag(I(:,1));
+I_2 = diag(I(:,3));
+R_1 = T{1}(1:3, 1:3);
+R_2 = T{3}(1:3, 1:3);
 
 disp('Calculating the inverse of this matrix:')
 % i = 1:1
-M_sym = m(3) * (Jp3' * Jp3) + Jo3'*(R_3*I_3*R_3')*Jo3; % should be rock solid
-M_sym = M_sym + m(4) * (Jp4' * Jp4) + Jo4'*(R_4*I_4*R_4')*Jo4
+M_sym = m(1) * (Jp1' * Jp1) + Jo1'*(R_1*I_1*R_1')*Jo1; % should be rock solid
+M_sym = M_sym + m(3) * (Jp2' * Jp2) + Jo2'*(R_2*I_2*R_2')*Jo2
 Minv_sym = inv(M_sym);
 
 % turn q's into vector

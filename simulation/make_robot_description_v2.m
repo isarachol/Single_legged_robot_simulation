@@ -44,7 +44,7 @@ joint_to_com(:,3) = [-invl_w; 0; invl_w];
 rot(3,3) = pi/2;
 
 % 4) leg 1 (j2 to leg1)
-leg1_l = 0.15;
+leg1_l = 0.2;
 leg1_w = 0.01;
 leg1_h = 0.01;
 dim(:,4) = [leg1_l; leg1_w; leg1_h];
