@@ -3,7 +3,7 @@
 close all;
 clc;
 
-disp('Dynamic test (3 joints)')
+disp('Dynamic test (6 joints)')
 
 %% Robot Descriptions
 % load robot description (geometry)
@@ -14,7 +14,7 @@ load(desc_filename);
 % Make M, M_inv, C functions
 make_syms_again = 0;
 if make_syms_again
-    make_syms(3);
+    make_syms(6);
 end
 
 %% Setup
@@ -28,8 +28,8 @@ n = tmax/dt; % number of timesteps, for loop-ing
 n = round(n);
 
 % initial conditions
-q0 = [0; 0; pi*0.8]; %; 2; 0.1; 0; 0];
-dq0 = [0; -1; 2]; %; 0.5; 0.1; 0; 0];
+q0 = [0; 0; pi*0.8; 0; 0; 0]; %; 2; 0.1; 0; 0];
+dq0 = [0.1; -1; 2; 0.5; 0.6; 0.1]; %; 0.5; 0.1; 0; 0];
 % q0 = 0;
 % dq0 = 3;
 x0 = [q0;dq0];
@@ -86,7 +86,7 @@ if(show_plot)
     ylim([-0.4, 0.4]);
     zlim([-0.4, 0.4]);
     f.Position = [250,70,1000,800];
-    view(100,15); %(135,15);
+    view(135,15); %(135,15);
     vecsize = 0.02;
     cp = constantplane("z", 0);
     % cp.FaceColor = "#7CFC00";

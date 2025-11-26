@@ -1,4 +1,4 @@
-function [bolddotx] = solve_ndof(x, damp)
+function [bolddotx] = solve_ndof_damp(x, damp)
    % Solve ODE for 2, 3, and 6 dof versions of the single legged robot
    % Input: x = [q, dq] (4, 6, or 12 variables)
    %        damp = damping constants (+) for each joint (defualt zero)
@@ -33,7 +33,9 @@ function [bolddotx] = solve_ndof(x, damp)
 
     Q = zeros(n,1); % no external forces/toirques
 
-    bolddotx(n+1:end) = M_inv*(Q-C);
+    Fd = damp.*dq;
+
+    bolddotx(n+1:end) = M_inv*(Q-C-Fd);
 
     bolddotx = numerical_check(bolddotx, tol);
 end
