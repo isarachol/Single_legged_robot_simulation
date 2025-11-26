@@ -159,30 +159,43 @@ R_8 = T{8}(1:3, 1:3);
 R_9 = T{9}(1:3, 1:3);
 R_10 = T{10}(1:3, 1:3);
 
-disp('Calculating the inverse of this matrix:')
+disp('Calculating the Mass matrix:')
 M_sym = m(3) * (Jp3' * Jp3) + Jo3'*(R_3*I_3*R_3')*Jo3; % should be rock solid
 M_sym = M_sym + m(4) * (Jp4' * Jp4) + Jo4'*(R_4*I_4*R_4')*Jo4;
 M_sym = M_sym + m(6) * (Jp6' * Jp6) + Jo6'*(R_6*I_6*R_6')*Jo6;
 M_sym = M_sym + m(8) * (Jp8' * Jp8) + Jo8'*(R_8*I_8*R_8')*Jo8;
 M_sym = M_sym + m(9) * (Jp9' * Jp9) + Jo9'*(R_9*I_9*R_9')*Jo9;
 M_sym = M_sym + m(10) * (Jp10' * Jp10) + Jo10'*(R_10*I_10*R_10')*Jo10
-Minv_sym = inv(M_sym);
+
+% try simplification
+% disp('Simplifying the Mass matrix:')
+% M_sym = simplify(M_sym, 'Steps', 20)
+
+% try backslash
+% disp('Calculating the inverse of this matrix:')
+% Minv_sym = M_sym \ eye(6); % inv(M_sym); % can never get passed this step
 
 % turn q's into vector
 q = sym("q", [size(M_sym,1) 1]);
 
 % this is how you swap variable names in a matlab symbolic expression
-Minv_sym = subs(Minv_sym, q1, q(1));
-Minv_sym = subs(Minv_sym, q2, q(2));
-Minv_sym = subs(Minv_sym, q3, q(3));
-Minv_sym = subs(Minv_sym, q4, q(4));
-Minv_sym = subs(Minv_sym, q5, q(5));
-Minv_sym = subs(Minv_sym, q6, q(6));
+M_sym = subs(M_sym, q1, q(1));
+M_sym = subs(M_sym, q2, q(2));
+M_sym = subs(M_sym, q3, q(3));
+M_sym = subs(M_sym, q4, q(4));
+M_sym = subs(M_sym, q5, q(5));
+M_sym = subs(M_sym, q6, q(6));
+% Minv_sym = subs(Minv_sym, q1, q(1));
+% Minv_sym = subs(Minv_sym, q2, q(2));
+% Minv_sym = subs(Minv_sym, q3, q(3));
+% Minv_sym = subs(Minv_sym, q4, q(4));
+% Minv_sym = subs(Minv_sym, q5, q(5));
+% Minv_sym = subs(Minv_sym, q6, q(6));
 
 % this is how to save the result for use in the future rather than needing
 % to perform the inverse calculation every time you run your script.
 matlabFunction(M_sym, "File", M_sym_filename, 'vars', {q});
 disp(strcat("Saved file to ", M_sym_filename));
-matlabFunction(Minv_sym, "File", Minv_sym_filename, 'vars', {q});
-disp(strcat("Saved file to ", Minv_sym_filename));
+% matlabFunction(Minv_sym, "File", Minv_sym_filename, 'vars', {q});
+% disp(strcat("Saved file to ", Minv_sym_filename));
 end

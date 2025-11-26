@@ -1,4 +1,4 @@
-function C_sym = calc_coriolis_sym_3dof()
+function C_sym = calc_coriolis_sym_6dof()
 
 clc
 clear
@@ -11,6 +11,8 @@ dq = [dq1; dq2; dq3; dq4; dq5; dq6];
 M = M_6dof(q);
 C_sym = sym('c', size(M,1)); % to preallocate space
 C_c = sym('c', size(M)); % to subtract out later
+
+disp("Partial differentiating the mass matrix");
 dM_dq1 = diff(M, q1);
 dM_dq2 = diff(M, q2);
 dM_dq3 = diff(M, q3);
@@ -20,6 +22,7 @@ dM_dq6 = diff(M, q6);
 dM_dqij = {dM_dq1, dM_dq2, dM_dq3, dM_dq4, dM_dq5, dM_dq6};
 N = size(M,1);
 
+disp("Calculating the coriolis matrix");
 for i=1:N
     for j=1:N
         for k=1:N
