@@ -44,7 +44,7 @@ joint_to_com(:,3) = [-invl_w; 0; invl_w];
 rot(3,3) = pi/2;
 
 % 4) leg 1 (j2 to leg1)
-leg1_l = 0.2;
+leg1_l = 0.15;
 leg1_w = 0.01;
 leg1_h = 0.01;
 dim(:,4) = [leg1_l; leg1_w; leg1_h];
@@ -90,9 +90,9 @@ rot(:,10) = [0;pi/2;0];
 %% Weight
 for i=1:10
     if i==1 || i==4 || i==6 || i==10
-        m(i) = 0.1; % body part weight
+        m(i) = 0.3; % body part weight
     else
-        m(i) = 0.05; % joint weight
+        m(i) = 0.1; % joint weight
     end
     I(:,i) = m(i)/12*[dim(2,i)^2 + dim(3,i)^2; dim(1,i)^2 + dim(3,i)^2; dim(1,i)^2 + dim(2,i)^2];
 end

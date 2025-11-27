@@ -3,7 +3,8 @@
 close all;
 clc;
 
-disp('Dynamic test (3 joints)')
+dof = 3;
+disp("Dynamic test (" + dof + " joints)")
 
 %% Robot Descriptions
 % load robot description (geometry)
@@ -11,15 +12,9 @@ desc_filename = 'robot_desc_v2.mat';
 make_robot_description_v2(desc_filename);
 load(desc_filename);
 
-% Make M, M_inv, C functions
-make_syms_again = 0;
-if make_syms_again
-    make_syms(3);
-end
-
 %% Setup
 % time
-tmax = 100;
+tmax = 20;
 dt = 0.0005;
 t_span = 0:dt:tmax-dt;
 
@@ -29,21 +24,22 @@ n = round(n);
 
 % initial conditions
 q0 = [0; 0; pi*0.8]; %; 2; 0.1; 0; 0];
-dq0 = [0; -1; 2]; %; 0.5; 0.1; 0; 0];
-% q0 = 0;
-% dq0 = 3;
+dq0 = [5; -5; 7]; %; 0.5; 0.1; 0; 0];
 x0 = [q0;dq0];
+
+% physical constants
+damp = 0.002 * ones([dof,1]);
 
 %% Solve for trajectory
 x_traj = zeros(size(x0,1),n);
 KE = zeros(n, 1);
 x_traj(:,1) = x0;
-KE(1) = ke_test_ndof(x_traj(:,1));
+KE(1) = ke_test_3dof(x_traj(:,1));
 
 for i=2:n
-    bolddotx_t = solve_ndof(x_traj(:,i-1));
+    bolddotx_t = solve_3dof(x_traj(:,i-1), damp);
     x_traj(:,i) = x_traj(:,i-1) + bolddotx_t * dt; % forward euler
-    KE(i) = ke_test_ndof(x_traj(:,i));
+    KE(i) = ke_test_3dof(x_traj(:,i));
 end
 
 %% Conservation of energy test (KE only)

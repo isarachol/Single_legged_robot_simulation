@@ -7,6 +7,7 @@ clear
 % File names
 Minv_sym_filename = "Minv_3dof";
 M_sym_filename = "M_3dof";
+dUgdq_filename = "dUgdq_3dof";
 
 % load robot description (geometry)
 desc_filename = 'robot_desc_v2.mat';
@@ -14,10 +15,8 @@ make_robot_description_v2(desc_filename);
 load(desc_filename);
 
 % define variables
-syms q1 q2 q3 q4 q5 q6 'real'
-% q1 = 0;
-q = [0; 0; q1; q2; 0; q3; 0; q4; q5; q6];
-% q = [0; 0; 0; q2; 0; q3; 0; q4; q5; q6];
+syms q1 q2 q3 'real'
+q = [0; 0; q1; q2; 0; q3; 0; 0; 0; 0];
 T = solve_kinematics(q, joint_to_com, rot);
 
 % Currently, T{2} represents to global origin for the robot (no jumping)
@@ -68,6 +67,19 @@ Jo3 = [z_2, zero_vec, zero_vec];
 Jo4 = [z_2, z_3, zero_vec];
 Jo6 = [z_2, z_3, z_5];
 
+%% Calc Ug
+g = [0; 0; 9.81];
+
+% rearrange for dUgdq
+Jp_m3 = [Jp3_3, Jp4_3, Jp6_3];
+Jp_m4 = [zero_vec, Jp4_4, Jp6_4];
+Jp_m6 = [zero_vec, zero_vec, Jp6_6];
+
+dUgdq1 = m(3)*sum(g' * Jp_m3)
+dUgdq2 = m(4)*sum(g' * Jp_m4)
+dUgdq3 = m(6)*sum(g' * Jp_m6)
+
+%% Calc Mass Matrix
 I_3 = diag(I(:,3));
 I_4 = diag(I(:,4));
 I_6 = diag(I(:,6));
@@ -85,6 +97,9 @@ Minv_sym = inv(M_sym);
 
 % turn q's into vector
 q = sym("q", [size(M_sym,1) 1]);
+
+% save dUgdq function
+matlabFunction([dUgdq1; dUgdq2; dUgdq3], "File", dUgdq_filename, 'vars', {q});
 
 % this is how you swap variable names in a matlab symbolic expression
 Minv_sym = subs(Minv_sym, q1, q(1));
