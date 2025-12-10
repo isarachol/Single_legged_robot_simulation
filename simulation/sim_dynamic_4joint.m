@@ -14,8 +14,8 @@ load(desc_filename);
 
 %% Setup
 % time
-tmax = 100;
-dt = 0.0005;
+tmax = 10;
+dt = 0.0001;
 t_span = 0:dt:tmax-dt;
 
 n = tmax/dt; % number of timesteps, for loop-ing
@@ -23,32 +23,58 @@ n = tmax/dt; % number of timesteps, for loop-ing
 n = round(n);
 
 % initial conditions
-q0 = [0; 0; pi*0.8; 0];
-dq0 = [0.1; -1; 2; 0.5];
+q0 = [pi; 0; 0; 0]; % rad
+dq0 = [0; 0; 0; 0]; % rad/s
 x0 = [q0;dq0];
 
-%% Solve for trajectory
-x_traj = zeros(size(x0,1),n);
-KE = zeros(n, 1);
-x_traj(:,1) = x0;
-KE(1) = ke_test_4dof(x_traj(:,1));
-bolddotx_t_prev = zeros([dof, 1]);
+% physical constants
+damp = 0.1; % N/(rad/s)
+damp_mat = damp * ones([dof,1]);
 
-for i=2:n
-    bolddotx_t = solve_4dof(x_traj(:,i-1), bolddotx_t_prev);
-    x_traj(:,i) = x_traj(:,i-1) + bolddotx_t * dt; % forward euler
-    KE(i) = ke_test_4dof(x_traj(:,i));
-    bolddotx_t_prev = bolddotx_t(dof+1:end);
+%% Solve for trajectory
+filename = "xtraj_E_4dof_grav.mat"; % "xtraj_KE_5dof.mat" "xtraj_KE_5dof_damp.mat" "xtraj_KE_5dof_dampgrav.mat"
+if ~isfile(filename)
+    if contains(filename, "grav")
+        grav = 1;
+    else
+        grav = 0;
+    end
+
+    x_traj = zeros(size(x0,1),n);
+    E = zeros(2, n);
+    x_traj(:,1) = x0;
+    E(:,1) = ke_pe_test_4dof(x_traj(:,1), grav);
+    
+    for i=2:n
+        bolddotx_t = solve_4dof(x_traj(:,i-1), damp_mat, grav);
+        x_traj(:,i) = x_traj(:,i-1) + bolddotx_t * dt; % forward euler
+        E(:,i) =  ke_pe_test_4dof(x_traj(:,i), grav); % ke_test_5dof(x_traj(:,i));
+    end
+
+    % Shift PE so that it's referenced to 0
+    PE_ref = min(E(2,:));
+    E(2,:) = E(2,:) - PE_ref;
+    
+    save(filename, "x_traj", "E");
+else
+    load(filename);
 end
 
 %% Conservation of energy test (KE only)
 figure()
-plot(t_span, KE);
+plot(t_span, E(1,:), 'LineWidth', 2); % KE
+hold on
+plot(t_span, E(2,:), 'LineWidth', 2); % PE
+plot(t_span, E(1,:) + E(2,:), 'LineWidth', 2); % E total
 xlabel("Time (s)");
-ylabel("KE (J)");
-title("KE vs time");
-bound = 0.2;
-ylim([max(KE)*(1-bound), max(KE)*(1+bound)]);
+ylabel("E (J)");
+% title("E vs time");
+legend(["KE", "PE", "E_{tot}"]);
+% bound = 0.2; % 0 - 0.5 or 0.6 ish if want buffer
+% ylim([max(E(1,:))*(1-bound), max(E(1,:))*(1+bound)]);
+set(gcf, 'Position', [100 100 800 200]);
+fontname("Times New Roman");
+fontsize(16, "points");
 
 %% Simulation ====================== Rock solid =============================
 
@@ -86,18 +112,21 @@ if(show_plot)
     cp = constantplane("z", 0);
     % cp.FaceColor = "#7CFC00";
 
-    % world frame
-    quiver3(0,0,0,1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
-    quiver3(0,0,0,0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
-    quiver3(0,0,0,0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
-
     q_aug = [0; 0; x_traj(1,1); x_traj(2,1); 0; x_traj(3,1); 0; x_traj(4,1); q5; q6];
     T = solve_kinematics(q_aug, joint_to_com, rot);
+
+    % world frame
+    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
+    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
+    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
+
     handle = {};
     handle = plot_single_legged_robot(T, dim, 0);
     drawnow;
     
     vecsize_fix_joint = 0.01;
+    time = 0;
+    tic
     for ts=1:n_speedup
         t = ts * speedup;
         % delete previous plot
@@ -112,6 +141,11 @@ if(show_plot)
         handle = plot_single_legged_robot(T, dim, 0);
         drawnow limitrate;
     end
+    time = toc;
+    disp("Simulation time = " + tmax + " s");
+    disp("Total time = " + time + " s");
+    disp("Speed up = Ttot/tmax " + time/tmax);
+    disp("One figure takes " + time/n_speedup + " s");
 end
 
 % end
