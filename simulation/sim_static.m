@@ -31,9 +31,9 @@ q = [0; 0; q1; q2; 0; q3; 0; q4; q5; q6];
 % Plot 3D
 show_plot_4views = 1;
 if(show_plot_4views)
-    plot_frame = 0;
     figure()
     % ============================= 3D =================================
+    plot_frame = 0;
     subplot(2,2,2)
     hold on
     xlabel("X (m)");
@@ -50,10 +50,11 @@ if(show_plot_4views)
     T = solve_kinematics(q, joint_to_com, rot);
     plot_single_legged_robot(T, dim, plot_frame, vecsize);
     % world frame
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
+    % quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
+    % quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
+    % quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
     % ============================= Top =================================
+    plot_frame = 0;
     subplot(2,2,1)
     hold on
     xlabel("X (m)");
@@ -64,10 +65,11 @@ if(show_plot_4views)
     
     plot_single_legged_robot(T, dim, plot_frame, vecsize);
     % world frame
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
+    % quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
+    % quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
+    % quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
     % ============================= Right =================================
+    plot_frame = 1;
     subplot(2,2,4)
     hold on
     xlabel("X (m)");
@@ -76,12 +78,14 @@ if(show_plot_4views)
     axis equal;
     view (180,0);
     
+    vecsize = [0,1,1,0,1,0,1,0,0,0] * vecsize_body;
     plot_single_legged_robot(T, dim, plot_frame, vecsize);
     % world frame
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
+    % quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
+    % quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
+    % quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
     % ============================= Front =================================
+    plot_frame = 1;
     subplot(2,2,3)
     hold on
     xlabel("X (m)");
@@ -90,11 +94,12 @@ if(show_plot_4views)
     axis equal;
     view (90,0);
     
+    vecsize = [0,1,0,0,0,0,0,1,0,0] * vecsize_body;
     plot_single_legged_robot(T, dim, plot_frame, vecsize);
     % world frame
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
+    % quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
+    % quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
+    % quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
 end
 
 show_plot = 1;
@@ -111,19 +116,19 @@ if(show_plot)
     ylim([-0.1, 0.1]);
     zlim([0, 0.2]);
     f.Position = [250,70,1000,800];
-    view (135,15);
+    view (180,0); %view (135,15);
     cp = constantplane("z", 0);
     % cp = constantplane("z", 0);
     % cp.FaceColor = "#7CFC00";
     
     vecsize_body = 0.02;
-    vecsize = [0,0,1,1,0,1,0,1,0,1] * vecsize_body;
+    vecsize = [0,1,1,1,1,1,1,1,0,1] * vecsize_body;
     T = solve_kinematics(q, joint_to_com, rot);
-    plot_single_legged_robot(T, dim, 0, vecsize);
+    plot_single_legged_robot(T, dim, plot_frame, vecsize);
     % world frame
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
-    quiver3(T{2}(1,4),T{2}(2,4),T{2}(3,4),0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
+    quiver3(0,0,0,1,0,0, 0.02, 'r', "MaxHeadSize", 100, 'LineWidth', 2);
+    quiver3(0,0,0,0,1,0, 0.02, 'g', "MaxHeadSize", 100, 'LineWidth', 2);
+    quiver3(0,0,0,0,0,1, 0.02, 'b', "MaxHeadSize", 100, 'LineWidth', 2);
 end
 
 end

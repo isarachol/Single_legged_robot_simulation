@@ -2,3 +2,5 @@
 simulation/unused/*
 profiler/*
 documents/*
+*.pdf
+simulation/figures/*

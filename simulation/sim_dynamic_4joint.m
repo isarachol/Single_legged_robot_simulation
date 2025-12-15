@@ -23,12 +23,12 @@ n = tmax/dt; % number of timesteps, for loop-ing
 n = round(n);
 
 % initial conditions
-q0 = [pi; 0; 0; 0]; % rad
+q0 = [0; 0; 0; 0]; % rad
 dq0 = [0; 0; 0; 0]; % rad/s
 x0 = [q0;dq0];
 
 % physical constants
-damp = 0.1; % N/(rad/s)
+damp = 0; % N/(rad/s)
 damp_mat = damp * ones([dof,1]);
 
 %% Solve for trajectory

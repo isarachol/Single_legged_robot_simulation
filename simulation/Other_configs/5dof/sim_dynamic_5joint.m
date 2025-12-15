@@ -32,7 +32,7 @@ damp = 0.2; % N/(rad/s)
 damp_mat = damp * ones([5,1]);
 
 %% Solve for trajectory
-filename = "xtraj_E_5dof_gravdamp_hi.mat"; % "xtraj_KE_5dof.mat" "xtraj_KE_5dof_damp.mat" "xtraj_KE_5dof_dampgrav.mat"
+filename = "xtraj_E_5dof_grav.mat"; % "xtraj_KE_5dof.mat" "xtraj_KE_5dof_damp.mat" "xtraj_KE_5dof_dampgrav.mat"
 if ~isfile(filename)
     x_traj = zeros(size(x0,1),n);
     E = zeros(2, n);

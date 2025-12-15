@@ -31,13 +31,13 @@ pts_unbroken = [pts(:,1:4), pts(:,1), pts(:,5:8), pts(:,5:6), pts(:,2:3), pts(:,
 handles = {};
 % draw 
 i=1;
-handles{i} = plot3(pts_unbroken(1,:), pts_unbroken(2,:), pts_unbroken(3,:), 'r'); i = i+1;
+handles{i} = plot3(pts_unbroken(1,:), pts_unbroken(2,:), pts_unbroken(3,:), 'r', 'LineWidth',1); i = i+1;
 
 % draw body frames
 if plot_frame
-    handles{i} = quiver3(T(1,4), T(2,4), T(3,4), T(1,1), T(2,1), T(3,1), vecsize, 'r', "MaxHeadSize", 100); i = i+1;
-    handles{i} = quiver3(T(1,4), T(2,4), T(3,4), T(1,2), T(2,2), T(3,2), vecsize, 'g', "MaxHeadSize", 100); i = i+1;
-    handles{i} = quiver3(T(1,4), T(2,4), T(3,4), T(1,3), T(2,3), T(3,3), vecsize, 'b', "MaxHeadSize", 100); i = i+1;
+    handles{i} = quiver3(T(1,4), T(2,4), T(3,4), T(1,1), T(2,1), T(3,1), vecsize, 'r', "MaxHeadSize", 100, 'LineWidth',1); i = i+1;
+    handles{i} = quiver3(T(1,4), T(2,4), T(3,4), T(1,2), T(2,2), T(3,2), vecsize, 'g', "MaxHeadSize", 100, 'LineWidth',1); i = i+1;
+    handles{i} = quiver3(T(1,4), T(2,4), T(3,4), T(1,3), T(2,3), T(3,3), vecsize, 'b', "MaxHeadSize", 100, 'LineWidth',1); i = i+1;
 end
 
 if norm(force) ~= 0
